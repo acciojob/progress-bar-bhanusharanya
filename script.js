@@ -1,32 +1,49 @@
-const codes = document.querySelectorAll('.code');
+const progress = document.getElementById('progress');
+const prev = document.getElementById('prev');
+const next = document.getElementById('next');
+const circles = document.querySelectorAll('.circle');
 
-codes.forEach((code, index) => {
-    code.addEventListener('input', (e) => {
-        if (e.target.value.length === 1) {
-            if (index < codes.length - 1) {
-                codes[index + 1].focus();
-            }
-        }
-    });
+let currentActive = 1;
 
-    code.addEventListener('keydown', (e) => {
-        if (e.key === 'Backspace' && e.target.value === '') {
-            if (index > 0) {
-                codes[index - 1].focus();
-            }
-        }
-    });
+next.addEventListener('click', () => {
+    currentActive++;
+
+    if (currentActive > circles.length) {
+        currentActive = circles.length;
+    }
+
+    update();
 });
 
-// Function to handle form submission and alert first and last name
-function getFormvalue() {
-    // Get the form element
-    const form = document.getElementById('form1');
-    
-    // Get the values of first and last name from the form
-    const firstName = form.elements['fname'].value;
-    const lastName = form.elements['lname'].value;
+prev.addEventListener('click', () => {
+    currentActive--;
 
-    // Alert the full name
-    alert(`${firstName} ${lastName}`);
+    if (currentActive < 1) {
+        currentActive = 1;
+    }
+
+    update();
+});
+
+function update() {
+    circles.forEach((circle, idx) => {
+        if (idx < currentActive) {
+            circle.classList.add('active');
+        } else {
+            circle.classList.remove('active');
+        }
+    });
+
+    const actives = document.querySelectorAll('.circle.active');
+
+    progress.style.width = ((actives.length - 1) / (circles.length - 1)) * 100 + '%';
+
+    if (currentActive === 1) {
+        prev.disabled = true;
+    } else if (currentActive === circles.length) {
+        next.disabled = true;
+    } else {
+        prev.disabled = false;
+        next.disabled = false;
+    }
 }
